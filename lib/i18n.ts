@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { getLocales } from 'expo-localization';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
 import en from '../locales/en.json';
 import zu from '../locales/zu.json';
@@ -28,15 +28,21 @@ i18n.use(initReactI18next).init({
   compatibilityJSON: 'v4',
 });
 
-// Load saved language preference
-AsyncStorage.getItem(LANGUAGE_KEY).then((lang) => {
-  if (lang && Object.keys(resources).includes(lang)) {
-    i18n.changeLanguage(lang);
-  }
-});
+// Load saved language preference (skip during SSR)
+if (Platform.OS !== 'web' || typeof window !== 'undefined') {
+  const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+  AsyncStorage.getItem(LANGUAGE_KEY).then((lang: string | null) => {
+    if (lang && Object.keys(resources).includes(lang)) {
+      i18n.changeLanguage(lang);
+    }
+  });
+}
 
 export async function setLanguage(lang: string) {
-  await AsyncStorage.setItem(LANGUAGE_KEY, lang);
+  if (Platform.OS !== 'web' || typeof window !== 'undefined') {
+    const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+    await AsyncStorage.setItem(LANGUAGE_KEY, lang);
+  }
   await i18n.changeLanguage(lang);
 }
 
