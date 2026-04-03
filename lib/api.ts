@@ -62,6 +62,22 @@ export const getLogbookSummary = (month?: string, vehicleId?: string) => {
   return api.get<any>(`/api/logbook/summary${qs ? `?${qs}` : ''}`);
 };
 
+// --- Tax API ---
+export const getTaxDashboard = () => api.get<any>('/api/tax/dashboard');
+export const getTaxCalculation = (vehicleId: string, period: string) =>
+  api.get<any>(`/api/tax/calculate?vehicle_id=${vehicleId}&period=${period}`);
+export const getVat201 = (periodStart: string, periodEnd: string) =>
+  api.get<any>(`/api/tax/vat201?period_start=${periodStart}&period_end=${periodEnd}`);
+export const getProvisionalTax = (year: number) =>
+  api.get<any>(`/api/tax/provisional?year=${year}`);
+
+// --- Reports API ---
+export const generateReport = (type: string, params: Record<string, unknown>) =>
+  api.post<any>(`/api/reports/${type}`, params);
+export const getReports = () => api.get<any[]>('/api/reports');
+export const getReportDownloadUrl = (reportId: string) =>
+  `https://tax-it-api-production.up.railway.app/api/reports/${reportId}/download`;
+
 // --- Income API ---
 export const addIncome = (data: Record<string, unknown>) => api.post<any>('/api/income', data);
 export const getIncomeRecords = (month?: string, platform?: string) => {
