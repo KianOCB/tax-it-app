@@ -78,6 +78,14 @@ export const getReports = () => api.get<any[]>('/api/reports');
 export const getReportDownloadUrl = (reportId: string) =>
   `https://tax-it-api-production.up.railway.app/api/reports/${reportId}/download`;
 
+// --- Billing API ---
+export const getSubscription = () => api.get<any>('/api/billing/subscription');
+export const subscribe = (plan: string, billingPeriod: string) =>
+  api.post<any>('/api/billing/subscribe', { plan, billing_period: billingPeriod });
+export const cancelSubscription = () => api.post<any>('/api/billing/cancel', {});
+export const getCheckoutUrl = (plan: string) =>
+  api.post<{ url: string }>('/api/billing/checkout', { plan });
+
 // --- Notifications API ---
 export const getNotifications = () => api.get<any[]>('/api/auth/notifications');
 export const markNotificationRead = (id: string) => api.post<any>(`/api/auth/notifications/${id}/read`, {});
