@@ -36,6 +36,32 @@ export const api = {
   delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
 };
 
+// --- Vehicle API ---
+export const getVehicles = () => api.get<any[]>('/api/vehicles');
+export const addVehicle = (data: Record<string, unknown>) => api.post<any>('/api/vehicles', data);
+export const updateVehicle = (id: string, data: Record<string, unknown>) =>
+  api.put<any>(`/api/vehicles/${id}`, data);
+export const deleteVehicle = (id: string) => api.delete(`/api/vehicles/${id}`);
+
+// --- Logbook API ---
+export const getLogbookEntries = (month?: string, vehicleId?: string) => {
+  const params = new URLSearchParams();
+  if (month) params.set('month', month);
+  if (vehicleId) params.set('vehicle_id', vehicleId);
+  const qs = params.toString();
+  return api.get<any[]>(`/api/logbook${qs ? `?${qs}` : ''}`);
+};
+export const addLogbookEntry = (data: Record<string, unknown>) =>
+  api.post<any>('/api/logbook', data);
+export const deleteLogbookEntry = (id: string) => api.delete(`/api/logbook/${id}`);
+export const getLogbookSummary = (month?: string, vehicleId?: string) => {
+  const params = new URLSearchParams();
+  if (month) params.set('month', month);
+  if (vehicleId) params.set('vehicle_id', vehicleId);
+  const qs = params.toString();
+  return api.get<any>(`/api/logbook/summary${qs ? `?${qs}` : ''}`);
+};
+
 export async function uploadReceipt(
   imageUri: string,
   receiptData: {
