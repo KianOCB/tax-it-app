@@ -62,6 +62,25 @@ export const getLogbookSummary = (month?: string, vehicleId?: string) => {
   return api.get<any>(`/api/logbook/summary${qs ? `?${qs}` : ''}`);
 };
 
+// --- Income API ---
+export const addIncome = (data: Record<string, unknown>) => api.post<any>('/api/income', data);
+export const getIncomeRecords = (month?: string, platform?: string) => {
+  const params = new URLSearchParams();
+  if (month) params.set('month', month);
+  if (platform) params.set('platform', platform);
+  const qs = params.toString();
+  return api.get<any[]>(`/api/income${qs ? `?${qs}` : ''}`);
+};
+export const getIncomeSummary = (month?: string) => {
+  const params = new URLSearchParams();
+  if (month) params.set('month', month);
+  const qs = params.toString();
+  return api.get<any>(`/api/income/summary${qs ? `?${qs}` : ''}`);
+};
+export const updateIncome = (id: string, data: Record<string, unknown>) =>
+  api.put<any>(`/api/income/${id}`, data);
+export const deleteIncome = (id: string) => api.delete(`/api/income/${id}`);
+
 export async function uploadReceipt(
   imageUri: string,
   receiptData: {
