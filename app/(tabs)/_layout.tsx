@@ -1,5 +1,36 @@
-import { Tabs } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
+import { Tabs, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { getUnreadCount } from '../../lib/api';
+
+function NotificationBell() {
+  const router = useRouter();
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    getUnreadCount().then((d) => setCount(d?.count ?? 0)).catch(() => {});
+    const interval = setInterval(() => {
+      getUnreadCount().then((d) => setCount(d?.count ?? 0)).catch(() => {});
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <Pressable onPress={() => router.push('/notifications')} style={{ marginRight: 16 }}>
+      <Ionicons name="notifications-outline" size={24} color="#fff" />
+      {count > 0 && (
+        <View style={{
+          position: 'absolute', top: -4, right: -6,
+          backgroundColor: '#EF4444', borderRadius: 9, minWidth: 18, height: 18,
+          justifyContent: 'center', alignItems: 'center',
+        }}>
+          <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>{count > 9 ? '9+' : count}</Text>
+        </View>
+      )}
+    </Pressable>
+  );
+}
 
 export default function TabLayout() {
   return (
@@ -10,6 +41,7 @@ export default function TabLayout() {
         headerStyle: { backgroundColor: '#1F4E79' },
         headerTintColor: '#fff',
         headerTitleStyle: { fontWeight: 'bold' },
+        headerRight: () => <NotificationBell />,
       }}
     >
       <Tabs.Screen
